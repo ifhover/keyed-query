@@ -106,7 +106,7 @@ const fetchUser = defineKeyed("user", async (id: string) => {
 ```typescript
 // src/app.tsx
 import { useKeyedSWR } from "keyed-query/hooks/swr";
-import { defineKeyed } from "./data";
+import { fetchUser } from "./data";
 
 function UserProfile({ userId }: { userId: string }) {
   const { data, error, isLoading } = useKeyedSWR(fetchUser, userId);
@@ -223,6 +223,7 @@ const fetchUser = defineKeyed("user", async (category?: string) => {
 ```typescript
 // src/app.tsx
 import { useKeyedQuery } from "keyed-query/hooks/tanstack-query";
+import { fetchUser } from "./fetchUser";
 
 function UserProfile({ userId }: { userId: string }) {
   const { data, error, isLoading } = useKeyedQuery(fetchUser, userId);
