@@ -1,0 +1,66 @@
+{
+  "name": "keyed-query",
+  "private": true,
+  "version": "1.0.1",
+  "type": "module",
+  "description": "For simple query and mutation",
+  "license": "MIT",
+  "author": "sudden3@foxmail.com",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./hooks/swr": {
+      "import": {
+        "types": "./dist/hooks/swr/index.d.ts",
+        "default": "./dist/hooks/swr/index.js"
+      },
+      "require": {
+        "types": "./dist/hooks/swr/index.d.ts",
+        "default": "./dist/hooks/swr/index.cjs"
+      }
+    },
+    "./hooks/tanstack-query": {
+      "import": {
+        "types": "./dist/hooks/tanstack-query/index.d.ts",
+        "default": "./dist/hooks/tanstack-query/index.js"
+      },
+      "require": {
+        "types": "./dist/hooks/tanstack-query/index.d.ts",
+        "default": "./dist/hooks/tanstack-query/index.cjs"
+      }
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "typescript": "~5.8.3",
+    "uuid": "^13.0.0",
+    "vite": "^7.1.6",
+    "swr": "^2.3.6",
+    "vite-plugin-dts": "^4.5.4",
+    "@tanstack/react-query": "^5.90.1",
+    "react": ">=18.0.0"
+  },
+  "dependencies": {},
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ifhover/keyed-query.git"
+  }
+}
