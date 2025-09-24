@@ -1,12 +1,12 @@
-# 概述
+# Overview
 
-`keyed-query` 是一个用于为函数绑定 `$key` 属性的轻量级库，旨在简化在使用 `SWR` 或 `TanStack Query`（React Query）等数据获取库时对请求 key 的管理。
+`keyed-query` is a lightweight library that binds a `$key` property to functions, designed to simplify the management of request keys when using data-fetching libraries such as `SWR` or `TanStack Query` (React Query).
 
-通过 `keyed-query`，你可以将 key 与对应的请求函数绑定在一起，从而避免手动维护 key 字符串或额外封装 hook，使代码更加简洁、易维护。
+With `keyed-query`, you can bind a key directly to its corresponding request function, eliminating the need to manually maintain key strings or create additional custom hooks. This results in cleaner, more maintainable code.
 
-## 现有问题
+## Existing Problems
 
-在实际项目中，通常会将每个 API 请求封装成独立的方法以便统一管理和获得良好的类型支持：
+In real-world projects, it's common practice to encapsulate each API request into a separate method for better organization and improved type support:
 
 ```typescript
 export const userApi = {
@@ -16,15 +16,15 @@ export const userApi = {
 };
 ```
 
-当我们引入 `SWR` 或 `TanStack Query` 来管理异步状态时，这些库要求我们为每个请求提供一个唯一的 key（例如 `useSWR` 的第一个参数）以实现缓存共享等功能：
+When integrating state management libraries like `SWR` or `TanStack Query` for handling asynchronous data, these libraries require a unique key (e.g., the first argument of `useSWR`) for each request to enable features such as cache sharing:
 
 ```typescript
 const { data, isLoading } = useSWR(["user.get", id], () => userApi.get(id));
 ```
 
-然而，如何组织和管理这些 key 成为了一个常见痛点。常见的两种做法都存在一定问题：
+However, managing these keys consistently becomes a common pain point. Two typical approaches both come with significant drawbacks:
 
-### 方法一：为每个 API 封装专用 Hook
+### Approach 1: Create Dedicated Hooks for Each API
 
 ```typescript
 export function useUserGet(
@@ -35,9 +35,9 @@ export function useUserGet(
 }
 ```
 
-> 缺点：需要额外编写大量重复的 Hook，维护成本高。
+> **Drawback**: Requires writing numerous repetitive hooks, leading to high maintenance costs.
 
-### 方法二：单独管理 key 映射对象
+### Approach 2: Manage Keys via a Separate Mapping Object
 
 ```typescript
 export const userApiKeys = {
@@ -45,11 +45,11 @@ export const userApiKeys = {
 };
 ```
 
-> 缺点：key 和请求逻辑分离，容易造成不一致，且使用时仍需手动拼接 key。
+> **Drawback**: Keys are decoupled from the actual request logic, increasing the risk of inconsistency. Additionally, keys still need to be manually composed during usage.
 
-## 解决方案
+## Solution
 
-为此，我们开发了 `keyed-query`，它允许你在定义请求函数的同时就为其绑定一个 key：
+To address this, we developed `keyed-query`, which allows you to bind a key to a request function at the time of definition:
 
 ```typescript
 export const userApi = {
@@ -59,7 +59,7 @@ export const userApi = {
 };
 ```
 
-之后，通过 `useKeyedSWR` 使用该函数时可以直接使用其定义时绑定的 key：
+Later, when using `useKeyedSWR`, you can automatically leverage the pre-bound key:
 
 ```typescript
 import { useKeyedSWR } from "keyed-query/hooks/swr";
@@ -69,21 +69,21 @@ function Profile({ id }: { id: string }) {
 }
 ```
 
-## `defineKeyed` 做了什么？
+## What Does `defineKeyed` Do?
 
-`defineKeyed(key, fn)` 的返回值[KeyedEndpoint ](/KeyedEndpoint)类型是一个普通的函数，但它额外附加了两个属性：
+The return value of `defineKeyed(key, fn)` is of type [KeyedEndpoint](/KeyedEndpoint). It behaves like a regular function but comes with two additional properties:
 
-- `$key`: 表示绑定的 key 字符串。
-- `$getKey(...args)`: 接收函数参数并返回完整的 key 数组。
+- `$key`: The bound key string.
+- `$getKey(...args)`: Accepts the function’s arguments and returns the full key array.
 
-示例：
+Example:
 
 ```typescript
 userApi.get(1);
 
 // --------
 
-// 等价于直接调用原始函数
+// Equivalent to calling the original function directly
 ((id: string) => {
   return request.get<User>(`api/user/${id}`);
 })(1);
@@ -94,13 +94,13 @@ userApi.get.$key; // "user.get"
 userApi.get.$getKey(1); // ["user.get", 1]
 ```
 
-> 如果未显式传入 key（即只传入函数），则 `$key` 会被自动设置为一个随机生成的 UUID 字符串。
+> If no explicit key is provided (i.e., only the function is passed), `$key` will automatically be set to a randomly generated UUID string.
 
-## 🔧 总结
+## 🔧 Summary
 
-借助 `keyed-query`，你可以：
+With `keyed-query`, you can:
 
-- 在函数定义阶段就完成 key 的绑定；
-- 避免冗余的 Hook 包装；
-- 提高 key 的可维护性和复用性；
-- 更好地配合现代数据获取库如 SWR 和 TanStack Query。
+- Bind keys at the function definition stage;
+- Avoid redundant hook wrappers;
+- Improve key maintainability and reusability;
+- Work more seamlessly with modern data-fetching libraries like SWR and TanStack Query.

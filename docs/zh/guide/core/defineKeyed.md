@@ -1,40 +1,40 @@
 # `defineKeyed`
 
-`defineKeyed` is the core function of the library, used to create request functions enhanced with key-related properties.
+`defineKeyed` 是库的核心函数，用于创建带 key 属性的请求函数。
 
-## Function Signatures
+## 函数签名
 
 ```typescript
-// Explicitly specify a key
+// 显式指定 key
 function defineKeyed<T extends (...p: any[]) => any>(
   key: string,
   fetcher: T
 ): KeyedEndpoint<T>;
 
-// Auto-generate a key
+// 自动生成 key
 function defineKeyed<T extends (...p: any[]) => any>(
   fetcher: T
 ): KeyedEndpoint<T>;
 ```
 
-## Parameters
+## 参数说明
 
-| Parameter | Type       | Required | Description                       |
-| --------- | ---------- | -------- | --------------------------------- |
-| `key`     | `string`   | No       | Custom unique identifier          |
-| `fetcher` | `Function` | Yes      | The actual data-fetching function |
+| 参数名    | 类型       | 必填 | 描述               |
+| --------- | ---------- | ---- | ------------------ |
+| `key`     | `string`   | 否   | 自定义的唯一标识符 |
+| `fetcher` | `Function` | 是   | 实际的请求函数     |
 
-## Return Value
+## 返回值
 
-Returns an extended function object that includes:
+返回一个扩展的函数对象，包含：
 
-- All original functionality of the function
-- `$key`: The bound unique identifier
-- `$getKey(...)`: A method to generate the full key array
+- 原始函数的所有功能
+- `$key`: 绑定的唯一标识符
+- `$getKey(...)`: 生成完整 key 数组的方法
 
-## Usage Examples
+## 使用示例
 
-### 1. Explicitly Specify a Key
+### 1. 显式指定 key
 
 ```typescript
 const getUser = defineKeyed("users.get", (id: string) => {
@@ -43,10 +43,10 @@ const getUser = defineKeyed("users.get", (id: string) => {
 
 console.log(getUser.$key); // "users.get"
 console.log(getUser.$getKey("123")); // ["users.get", "123"]
-getUser("123"); // Executes the function normally
+getUser("123"); // 正常执行函数
 ```
 
-### 2. Auto-generated Key
+### 2. 自动生成 key
 
 ```typescript
 const getUserList = defineKeyed(() => {
@@ -57,7 +57,7 @@ console.log(getUserList.$key); // "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx" (UUID)
 console.log(getUserList.$getKey()); // ["xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"]
 ```
 
-### 3. Function with Complex Parameters
+### 3. 复杂参数函数
 
 ```typescript
 const searchUsers = defineKeyed("users.search", (name: string, age: number) => {

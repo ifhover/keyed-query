@@ -2,11 +2,11 @@ export default {
   themeConfig: {
     sidebar: [
       {
-        text: "Guide",
+        text: "指南",
         items: [
-          { text: "overview", link: "/guide/overview" },
-          { text: "quick-start", link: "/guide/quick-start" },
-          { text: "other", link: "/guide/other" },
+          { text: "概述", link: "/guide/overview" },
+          { text: "快速开始", link: "/guide/quick-start" },
+          { text: "其他说明", link: "/guide/other" },
         ],
       },
       {

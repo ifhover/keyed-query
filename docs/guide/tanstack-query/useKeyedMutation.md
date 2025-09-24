@@ -1,37 +1,37 @@
 # `useKeyedMutation`
 
-`useKeyedMutation` 是一个基于 `TanstackQuery React`的`useMutation` 封装的 React Hook，专为配合 `keyed-query` 定义的带 key 函数而设计。它自动使用函数绑定的 `$key` 作为 mutation key，并提供类型安全的参数传递，简化了 TanStack Query Mutation 的调用方式。
+`useKeyedMutation` is a React Hook built on top of TanStack Query's `useMutation`, specifically designed to work with functions defined by `keyed-query` that have bound keys. It automatically uses the function's `$key` as the mutation key and provides type-safe parameter passing, simplifying the usage of TanStack Query mutations.
 
-## 导入
+## Import
 
 ```typescript
 import { useKeyedMutation } from "keyed-query/hooks/tanstack-query";
 ```
 
-## 参数说明
+## Parameters
 
-| 参数名     | 类型                               | 必填 | 描述                                                |
-| ---------- | ---------------------------------- | ---- | --------------------------------------------------- |
-| `endpoint` | `KeyedEndpoint<(arg: any) => any>` | 是   | 通过 `defineKeyed` 创建的带 `$key` 属性的单参数函数 |
-| `options`  | `MutationOptions`                  | 否   | 传递给 `useMutation` 的配置选项                     |
+| Parameter  | Type                               | Required | Description                                                                          |
+| ---------- | ---------------------------------- | -------- | ------------------------------------------------------------------------------------ |
+| `endpoint` | `KeyedEndpoint<(arg: any) => any>` | Yes      | A single-parameter function created via `defineKeyed`, which has the `$key` property |
+| `options`  | `MutationOptions`                  | No       | Configuration options passed directly to `useMutation`                               |
 
-## 返回值
+## Return Value
 
-返回 `useMutation` 的标准响应对象，包含：
+Returns the standard response object from `useMutation`, including:
 
-- `data`: 请求成功后的数据
-- `error`: 请求失败时的错误信息
-- `isPending`: 是否正在进行请求
-- `isSuccess`: 请求是否成功
-- `isError`: 请求是否失败
-- `mutate`: 触发 mutation 的函数，接收参数并返回 Promise
-- `mutateAsync`: 触发 mutation 的异步函数，返回 Promise
-- `reset`: 重置状态的方法
-- [TanStack Query 官方文档](https://tanstack.com/query) - 了解更多 Mutation 返回值
+- `data`: Data returned upon successful request
+- `error`: Error information if the request fails
+- `isPending`: Whether a mutation is currently in progress
+- `isSuccess`: Whether the request succeeded
+- `isError`: Whether the request failed
+- `mutate`: Function to trigger the mutation; accepts arguments (does not return a Promise)
+- `mutateAsync`: Asynchronous function to trigger the mutation; returns a Promise
+- `reset`: Method to reset the mutation state
+- [TanStack Query Official Documentation](https://tanstack.com/query) - Learn more about mutation return values
 
-## 使用示例
+## Usage Examples
 
-### 1. 基本使用
+### 1. Basic Usage
 
 ```typescript
 const api = {
@@ -40,16 +40,16 @@ const api = {
   ),
 };
 
-// 在组件中使用
+// Using in a component
 function UserProfile() {
   const { mutate, isPending, data, error } = useKeyedMutation(api.updateUser);
 
   const handleUpdate = async (userData: UserUpdateData) => {
     try {
       await mutate(userData);
-      console.log("更新成功:", data);
+      console.log("Update succeeded:", data);
     } catch (err) {
-      console.error("更新失败:", error);
+      console.error("Update failed:", error);
     }
   };
 
@@ -59,72 +59,72 @@ function UserProfile() {
         onClick={() => handleUpdate({ name: "John" })}
         disabled={isPending}
       >
-        {isPending ? "更新中..." : "更新用户"}
+        {isPending ? "Updating..." : "Update User"}
       </button>
     </div>
   );
 }
 ```
 
-### 2. 带配置选项
+### 2. With Configuration Options
 
 ```typescript
 const { mutate, isPending } = useKeyedMutation(api.updateUser, {
   onSuccess: (data, variables, context) => {
-    console.log("更新成功:", data);
-    // 可以在这里更新相关缓存
+    console.log("Update successful:", data);
+    // You can update related cache here
   },
   onError: (error, variables, context) => {
-    console.error("更新失败:", error);
+    console.error("Update failed:", error);
   },
   onSettled: (data, error, variables, context) => {
-    console.log("请求完成");
+    console.log("Request completed");
   },
 });
 ```
 
-### 3. 与其他 TanStack Query 数据联动
+### 3. Coordinating with Other TanStack Query Data
 
 ```typescript
 const { data: user } = useKeyedQuery(api.getUser, userId);
 const { mutate: updateUser } = useKeyedMutation(api.updateUser);
 
-// updateUser 成功后，可以手动重新验证 getUser 的数据
+// After `updateUser` succeeds, manually revalidate the `getUser` data
 const handleUpdate = async (userData: UserUpdateData) => {
   await mutate(userData, {
     onSuccess: () => {
-      // 手动重新获取用户数据
+      // Manually refetch user data
       queryClient.invalidateQueries({ queryKey: api.getUser.$getKey(userId) });
     },
   });
 };
 ```
 
-## 注意事项
+## Notes
 
-1. **参数限制**：当前实现仅支持单参数函数，即 `endpoint` 必须是接受一个参数的函数
-2. **Key 生成**：使用 `endpoint.$key` 作为 mutation 的 key
-3. **参数传递**：通过 `mutate` 或 `mutateAsync` 函数传入的参数会传递给原始函数
-4. **类型安全**：完全支持 TypeScript 类型推导，包括返回值类型和参数类型
+1. **Parameter Limitation**: The current implementation only supports single-parameter functions—i.e., `endpoint` must be a function that takes exactly one argument.
+2. **Key Generation**: Uses `endpoint.$key` as the mutation key.
+3. **Parameter Passing**: Arguments passed via `mutate` or `mutateAsync` are forwarded to the original fetcher function.
+4. **Type Safety**: Full TypeScript support with accurate type inference for return values and parameters.
 
-## 配置选项
+## Configuration Options
 
-`options` 参数支持所有 `useMutation` 的配置选项：
+The `options` parameter supports all configuration options available in `useMutation`:
 
-| 选项         | 类型                                         | 描述                                     |
-| ------------ | -------------------------------------------- | ---------------------------------------- |
-| `mutationFn` | `(variables) => Promise<T>`                  | 实际执行的异步函数（已由 hook 自动设置） |
-| `onMutate`   | `(variables) => Promise<Context> \| Context` | 请求开始前的回调，可用于乐观更新         |
-| `onSuccess`  | `(data, variables, context) => void`         | 请求成功时的回调                         |
-| `onError`    | `(error, variables, context) => void`        | 请求失败时的回调                         |
-| `onSettled`  | `(data, error, variables, context) => void`  | 请求完成时的回调（无论成功或失败）       |
-| `retry`      | `number \| boolean`                          | 失败时的重试次数                         |
-| `retryDelay` | `number \| (attempt: number) => number`      | 重试延迟时间                             |
-| ...          |                                              |                                          |
+| Option       | Type                                         | Description                                                     |
+| ------------ | -------------------------------------------- | --------------------------------------------------------------- |
+| `mutationFn` | `(variables) => Promise<T>`                  | The actual async function (automatically set by the hook)       |
+| `onMutate`   | `(variables) => Promise<Context> \| Context` | Callback before mutation starts (useful for optimistic updates) |
+| `onSuccess`  | `(data, variables, context) => void`         | Callback when the request succeeds                              |
+| `onError`    | `(error, variables, context) => void`        | Callback when the request fails                                 |
+| `onSettled`  | `(data, error, variables, context) => void`  | Callback when the request settles (success or failure)          |
+| `retry`      | `number \| boolean`                          | Number of retries on failure                                    |
+| `retryDelay` | `number \| (attempt: number) => number`      | Delay between retries                                           |
+| ...          |                                              |                                                                 |
 
-- [TanStack Query 官方文档](https://tanstack.com/query) - 了解更多 Mutation 配置项
+- [TanStack Query Official Documentation](https://tanstack.com/query) - Learn more about mutation configuration options
 
-## 函数签名
+## Function Signature
 
 ```typescript
 function useKeyedMutation<T extends KeyedEndpoint<(arg: any) => any>>(

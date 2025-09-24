@@ -4,21 +4,21 @@ layout: home
 
 hero:
   name: "Keyyed-Query"
-  text: "让数据请求变得简单而优雅"
-  tagline: 统一管理请求函数与缓存 key 的现代化解决方案
+  text: "Simplify and beautify data fetching"
+  tagline: A modern solution for unified management of request functions and cache keys
   actions:
     - theme: brand
-      text: 查看文档
+      text: View Documentation
       link: /guide/overview
     - theme: alt
-      text: Github
+      text: GitHub
       link: https://github.com/ifhover/keyed-query
 
 features:
-  - title: 🔄 函数即 Key
-    details: 将请求函数与唯一标识符绑定，实现逻辑与缓存策略的完美统一
-  - title: 📦 零配置集成
-    details: 一行代码即可接入 SWR 或 TanStack Query，大幅提升开发效率
-  - title: ⚡ 智能类型推导
-    details: 基于泛型约束自动推导参数和返回值类型，杜绝类型不匹配问题
+  - title: 🔄 Function as Key
+    details: Bind request functions with unique identifiers to perfectly unify logic and caching strategies
+  - title: 📦 Zero-Config Integration
+    details: Integrate seamlessly with SWR or TanStack Query in a single line of code, significantly boosting development efficiency
+  - title: ⚡ Smart Type Inference
+    details: Automatically infer parameter and return types based on generic constraints, eliminating type mismatches
 ---

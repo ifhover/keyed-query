@@ -1,6 +1,6 @@
-# Quick Start
+# 快速开始
 
-## Installation
+## 安装
 
 ::: code-group
 
@@ -18,7 +18,7 @@ yarn add keyed-query
 
 :::
 
-## Define Endpoints
+## 定义 Endpoint
 
 ```typescript
 import { defineKeyed } from "keyed-query";
@@ -41,11 +41,11 @@ const addUser = defineKeyed((user: User) => {
 });
 ```
 
-## Usage
+## 使用
 
-### Using Inside Components
+### 在组件内使用
 
-`keyed-query` provides hooks adapted for `SWR` and `Tanstack Query React`:
+`keyed-key` 提供了适配 `SWR` 和 `Tanstack Query React` 的 Hook：
 
 ::: code-group
 
@@ -92,9 +92,9 @@ function Edit() {
 }
 ```
 
-#### Hook Mapping Reference
+#### API 的对应关系
 
-The hooks provided by `keyed-query` are wrappers around the corresponding hooks from SWR and Tanstack Query. `keyed-query` simplifies the calling signature by eliminating the need to manually specify keys, while maintaining identical return types to the original hooks.
+keyed-query 提供的 hook 是对以下 swr、tanstack query hook 的封装，keyed-query 只简化了调用时的参数(不需要写 key 了)，返回类型和原方法是一致的。
 
 | keyed-query         | swr              | tanstack query |
 | ------------------- | ---------------- | -------------- |
@@ -105,7 +105,7 @@ The hooks provided by `keyed-query` are wrappers around the corresponding hooks 
 
 :::
 
-### Using as Regular Functions
+### 当作普通函数使用
 
 ```typescript
 getUser("1");

@@ -2,6 +2,17 @@ export default {
   // 站点级选项
   title: "Keyed-Query",
   description: "Just playing around.",
+  locales: {
+    root: {
+      label: "English",
+      lang: "en",
+    },
+    zh: {
+      label: "简体中文",
+      lang: "zh",
+      link: "/zh",
+    },
+  },
 
   themeConfig: {
     search: {

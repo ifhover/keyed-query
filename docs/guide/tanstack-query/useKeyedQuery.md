@@ -1,50 +1,50 @@
 # `useKeyedQuery`
 
-`useKeyedQuery` 是一个基于 `TanstackQuery React`的`useQuery` 封装的 React Hook，专为配合 `keyed-query` 定义的带 key 函数而设计。它自动从函数中提取绑定的 `$key` 和 `$getKey` 方法，生成完整的查询 key，简化了 TanStack Query 的调用方式。
+`useKeyedQuery` is a React Hook built on top of TanStack Query's `useQuery`, specifically designed to work with functions defined by `keyed-query` that have bound keys. It automatically extracts the `$key` and `$getKey` methods from the function to generate a complete query key, simplifying the usage of TanStack Query.
 
-## 导入
+## Import
 
 ```typescript
 import { useKeyedQuery } from "keyed-query/hooks/tanstack-query";
 ```
 
-## 参数说明
+## Parameters
 
-| 参数名         | 类型            | 必填 | 描述                                          |
-| -------------- | --------------- | ---- | --------------------------------------------- |
-| `endpoint`     | `KeyedEndpoint` | 是   | 通过 `defineKeyed` 创建的带 `$key` 属性的函数 |
-| `args` / `arg` | `Parameters<T>` | 否\* | 传递给 `endpoint` 函数的参数列表或单个参数    |
-| `options`      | `QueryOptions`  | 否   | 传递给 `useQuery` 的配置选项                  |
+| Parameter      | Type            | Required | Description                                                                  |
+| -------------- | --------------- | -------- | ---------------------------------------------------------------------------- |
+| `endpoint`     | `KeyedEndpoint` | Yes      | A function created via `defineKeyed`, which has the `$key` property          |
+| `args` / `arg` | `Parameters<T>` | No\*     | The arguments to pass to the `endpoint` function (as a list or single value) |
+| `options`      | `QueryOptions`  | No       | Configuration options passed directly to `useQuery`                          |
 
-> \* 当 `endpoint` 函数无参数时，第二个参数被视为 `options`
+> \* When the `endpoint` function takes no parameters, the second argument is treated as `options`.
 
-## 返回值
+## Return Value
 
-返回 `useQuery` 的标准响应对象，包含：
+Returns the standard response object from `useQuery`, including:
 
-- `data`: 请求成功后的数据
-- `error`: 请求失败时的错误信息
-- `isLoading`: 是否正在加载数据
-- `isFetching`: 是否正在获取数据
-- `isSuccess`: 请求是否成功
-- `isError`: 请求是否失败
-- `refetch`: 手动重新获取数据的方法
-- [TanStack Query 官方文档](https://tanstack.com/query) - 了解更多 Query 返回值
+- `data`: Data returned upon successful request
+- `error`: Error information if the request fails
+- `isLoading`: Whether data is currently being loaded
+- `isFetching`: Whether data is being fetched (including background revalidation)
+- `isSuccess`: Whether the request succeeded
+- `isError`: Whether the request failed
+- `refetch`: Method to manually refetch data
+- [TanStack Query Official Documentation](https://tanstack.com/query) - Learn more about query return values
 
-## 使用示例
+## Usage Examples
 
-### 1. 无参数函数
+### 1. Function Without Parameters
 
 ```typescript
 const api = {
   getUserList: defineKeyed("users.list", () => request.get("/api/users")),
 };
 
-// 使用时无需传参
+// No arguments needed when calling
 const { data, isLoading } = useKeyedQuery(api.getUserList);
 ```
 
-### 2. 单个参数函数
+### 2. Function With a Single Parameter
 
 ```typescript
 const api = {
@@ -53,11 +53,11 @@ const api = {
   ),
 };
 
-// 传入单个参数
+// Pass a single argument
 const { data, isLoading } = useKeyedQuery(api.getUser, "123");
 ```
 
-### 3. 多参数函数
+### 3. Function With Multiple Parameters
 
 ```typescript
 const api = {
@@ -66,27 +66,27 @@ const api = {
   ),
 };
 
-// 传入多个参数
+// Pass multiple arguments as an array
 const { data, isLoading } = useKeyedQuery(api.searchUsers, ["john", 25]);
 ```
 
-### 4. 带配置选项
+### 4. With Configuration Options
 
 ```typescript
 const { data, isLoading } = useKeyedQuery(api.getUser, "123", {
-  staleTime: 5 * 60 * 1000, // 5分钟
-  cacheTime: 10 * 60 * 1000, // 10分钟
+  staleTime: 5 * 60 * 1000, // 5 minutes
+  cacheTime: 10 * 60 * 1000, // 10 minutes
   refetchOnWindowFocus: false,
 });
 ```
 
-## 注意事项
+## Notes
 
-1. **参数处理**：`useKeyedQuery` 会自动根据 `endpoint` 函数的参数个数来判断参数的传入方式
-2. **Key 生成**：使用 `endpoint.$getKey(...params)` 生成完整的查询 key
-3. **类型安全**：完全支持 TypeScript 类型推导，包括返回值类型和参数类型
+1. **Parameter Handling**: `useKeyedQuery` automatically determines how to interpret the parameter(s) based on the number of arguments expected by the `endpoint` function.
+2. **Key Generation**: Uses `endpoint.$getKey(...params)` to generate the full query key.
+3. **Type Safety**: Full TypeScript support with accurate type inference for return values and parameters.
 
-## 函数签名
+## Function Signatures
 
 ```typescript
 function useKeyedQuery<T extends KeyedEndpoint<(...args: any[]) => any>>(

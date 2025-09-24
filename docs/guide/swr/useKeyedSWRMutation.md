@@ -1,34 +1,35 @@
 # `useKeyedSWRMutation`
 
-`useKeyedSWRMutation` 是一个基于 `useSWRMutation` 封装的 React Hook，专为配合 `keyed-query` 定义的带 key 函数而设计。它自动从函数中提取绑定的 `$key`，并提供类型安全的参数传递，简化了 SWR Mutation 的调用方式。
+`useKeyedSWRMutation` is a React Hook built on top of `useSWRMutation`, specifically designed to work with functions defined by `keyed-query` that have bound keys. It automatically extracts the `$key` from the function and provides type-safe parameter passing, simplifying the usage of SWR mutations.
 
-## 导入
+## Import
 
 ```typescript
 import { useKeyedSWRMutation } from "keyed-query/hooks/swr-mutation";
 ```
 
-## 参数说明
+## Parameters
 
-| 参数名     | 类型                               | 必填 | 描述                                                |
-| ---------- | ---------------------------------- | ---- | --------------------------------------------------- |
-| `endpoint` | `KeyedEndpoint<(arg: any) => any>` | 是   | 通过 `defineKeyed` 创建的带 `$key` 属性的单参数函数 |
-| `options`  | `SWRMutationConfiguration`         | 否   | 传递给 `useSWRMutation` 的配置选项                  |
+| Parameter  | Type                               | Required | Description                                                                    |
+| ---------- | ---------------------------------- | -------- | ------------------------------------------------------------------------------ |
+| `endpoint` | `KeyedEndpoint<(arg: any) => any>` | Yes      | A single-parameter function created via `defineKeyed` with the `$key` property |
+| `options`  | `SWRMutationConfiguration`         | No       | Configuration options passed directly to `useSWRMutation`                      |
 
-## 返回值
+## Return Value
 
-返回 `useSWRMutation` 的标准响应对象，包含：
+Returns the standard response object from `useSWRMutation`, including:
 
-- `data`: 请求成功后的数据
-- `error`: 请求失败时的错误信息
-- `isMutating`: 是否正在进行请求
-- `trigger`: 触发 mutation 的函数，接收参数并返回 Promise
-- `reset`: 重置状态的方法
-- [SWR Mutation 官方文档](https://swr.vercel.app/docs/mutation) - 了解更多 Mutation 返回值
+- `data`: Data returned upon successful request
+- `error`: Error information if the request fails
+- `isMutating`: Whether a mutation is currently in progress
+- `trigger`: Function to trigger the mutation; accepts arguments and returns a Promise
+- `reset`: Method to reset the mutation state
 
-## 使用示例
+- [SWR Mutation Official Documentation](https://swr.vercel.app/docs/mutation) - Learn more about mutation return values
 
-### 1. 基本使用
+## Usage Examples
+
+### 1. Basic Usage
 
 ```typescript
 const api = {
@@ -37,7 +38,7 @@ const api = {
   ),
 };
 
-// 在组件中使用
+// Using in a component
 function UserProfile() {
   const { trigger, isMutating, data, error } = useKeyedSWRMutation(
     api.updateUser
@@ -46,9 +47,9 @@ function UserProfile() {
   const handleUpdate = async (userData: UserUpdateData) => {
     try {
       const result = await trigger(userData);
-      console.log("更新成功:", result);
+      console.log("Update succeeded:", result);
     } catch (err) {
-      console.error("更新失败:", err);
+      console.error("Update failed:", err);
     }
   };
 
@@ -58,65 +59,65 @@ function UserProfile() {
         onClick={() => handleUpdate({ name: "John" })}
         disabled={isMutating}
       >
-        {isMutating ? "更新中..." : "更新用户"}
+        {isMutating ? "Updating..." : "Update User"}
       </button>
     </div>
   );
 }
 ```
 
-### 2. 带配置选项
+### 2. With Configuration Options
 
 ```typescript
 const { trigger, isMutating } = useKeyedSWRMutation(api.updateUser, {
   onSuccess: (data) => {
-    console.log("更新成功:", data);
-    // 可以在这里更新相关缓存
+    console.log("Update successful:", data);
+    // You can update related cache here
   },
   onError: (error) => {
-    console.error("更新失败:", error);
+    console.error("Update failed:", error);
   },
-  revalidate: true, // 更新后重新验证相关数据
+  revalidate: true, // Revalidate related data after update
 });
 ```
 
-### 3. 与其他 SWR 数据联动
+### 3. Coordinating with Other SWR Data
 
 ```typescript
 const { data: user } = useKeyedSWR(api.getUser, userId);
 const { trigger: updateUser } = useKeyedSWRMutation(api.updateUser);
 
-// updateUser 成功后，可以手动重新验证 getUser 的数据
+// After `updateUser` succeeds, manually revalidate the `getUser` data
 const handleUpdate = async (userData: UserUpdateData) => {
   await updateUser(userData);
-  // 手动重新获取用户数据
+  // Manually re-fetch user data
   mutate(api.getUser.$getKey(userId));
 };
 ```
 
-## 注意事项
+## Notes
 
-1. **参数限制**：当前实现仅支持单参数函数，即 `endpoint` 必须是接受一个参数的函数
-2. **Key 生成**：使用 `endpoint.$key` 作为 mutation 的 key
-3. **参数传递**：通过 `trigger` 函数传入的参数会作为 `arg` 传递给原始函数
-4. **类型安全**：完全支持 TypeScript 类型推导，包括返回值类型和参数类型
+1. **Parameter Limitation**: The current implementation only supports single-parameter functions—i.e., `endpoint` must be a function that takes exactly one argument.
+2. **Key Generation**: Uses `endpoint.$key` as the mutation key.
+3. **Parameter Passing**: Arguments passed via the `trigger` function are forwarded as `arg` to the original fetcher function.
+4. **Type Safety**: Full TypeScript support with accurate type inference for return values and parameters.
 
-## 配置选项
+## Configuration Options
 
-`options` 参数支持所有 `useSWRMutation` 的配置选项：
+The `options` parameter supports all configuration options available in `useSWRMutation`:
 
-| 选项              | 类型                            | 描述                                         |
-| ----------------- | ------------------------------- | -------------------------------------------- |
-| `onSuccess`       | `(data, key, config) => void`   | 请求成功时的回调                             |
-| `onError`         | `(err, key, config) => void`    | 请求失败时的回调                             |
-| `revalidate`      | `boolean`                       | 是否在成功后重新验证相关数据（默认: `true`） |
-| `throwOnError`    | `boolean`                       | 是否在错误时抛出异常（默认: `true`）         |
-| `optimisticData`  | `Data \| (currentData) => Data` | 乐观更新的数据                               |
-| `rollbackOnError` | `boolean`                       | 错误时是否回滚乐观更新（默认: `true`）       |
+| Option            | Type                            | Description                                                        |
+| ----------------- | ------------------------------- | ------------------------------------------------------------------ |
+| `onSuccess`       | `(data, key, config) => void`   | Callback when the request succeeds                                 |
+| `onError`         | `(err, key, config) => void`    | Callback when the request fails                                    |
+| `revalidate`      | `boolean`                       | Whether to revalidate related data after success (default: `true`) |
+| `throwOnError`    | `boolean`                       | Whether to throw an error when mutation fails (default: `true`)    |
+| `optimisticData`  | `Data \| (currentData) => Data` | Data for optimistic UI updates                                     |
+| `rollbackOnError` | `boolean`                       | Whether to rollback optimistic updates on error (default: `true`)  |
 
-- [SWR Mutation 官方文档](https://swr.vercel.app/docs/mutation) - 了解更多 Mutation 配置选项
+- [SWR Mutation Official Documentation](https://swr.vercel.app/docs/mutation) - Learn more about mutation configuration options
 
-## 函数签名
+## Function Signature
 
 ```typescript
 function useKeyedSWRMutation<T extends KeyedEndpoint<(arg: any) => any>>(

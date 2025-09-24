@@ -1,49 +1,49 @@
 # `useKeyedSWR`
 
-`useKeyedSWR` 是一个基于 `useSWR` 封装的 React Hook，专为配合 `keyed-query` 定义的带 key 函数而设计。它自动从函数中提取绑定的 `$key`，并将参数作为 key 的一部分，简化了 SWR 的调用方式。
+`useKeyedSWR` is a React Hook built on top of `useSWR`, specifically designed to work with functions defined by `keyed-query` that have bound keys. It automatically extracts the `$key` from the function and uses the passed parameters as part of the key, simplifying the usage of SWR.
 
-## 导入
+## Import
 
 ```typescript
 import { useKeyedSWR } from "keyed-query/hooks/swr";
 ```
 
-## 参数说明
+## Parameters
 
-| 参数名             | 类型               | 必填 | 描述                                          |
-| ------------------ | ------------------ | ---- | --------------------------------------------- |
-| `endpoint`         | `KeyedEndpoint`    | 是   | 通过 `defineKeyed` 创建的带 `$key` 属性的函数 |
-| `params` / `param` | `Parameters<T>`    | 否\* | 传递给 `endpoint` 函数的参数列表或单个参数    |
-| `options`          | `SWRConfiguration` | 否   | 传递给 `useSWR` 的配置选项                    |
+| Parameter          | Type               | Required | Description                                                                  |
+| ------------------ | ------------------ | -------- | ---------------------------------------------------------------------------- |
+| `endpoint`         | `KeyedEndpoint`    | Yes      | A function created via `defineKeyed`, which has the `$key` property          |
+| `params` / `param` | `Parameters<T>`    | No\*     | The arguments to pass to the `endpoint` function (as a list or single value) |
+| `options`          | `SWRConfiguration` | No       | Configuration options passed directly to `useSWR`                            |
 
-> \* 当 `endpoint` 函数无参数时，第二个参数被视为 `options`
+> \* When the `endpoint` function takes no parameters, the second argument is treated as `options`.
 
-## 返回值
+## Return Value
 
-返回 `useSWR` 的标准响应对象，包含：
+Returns the standard SWR response object, including:
 
-- `data`: 请求成功后的数据
-- `error`: 请求失败时的错误信息
-- `isLoading`: 是否正在加载数据
-- `isValidating`: 是否正在重新验证数据
-- `mutate`: 手动触发数据更新的方法
+- `data`: The data returned upon successful request
+- `error`: Error information if the request fails
+- `isLoading`: Whether data is currently being loaded
+- `isValidating`: Whether revalidation is in progress
+- `mutate`: Method to manually trigger data updates
 
-- [SWR 官方文档](https://swr.vercel.app/) - 了解更多 SWR 配置选项
+- [SWR Official Documentation](https://swr.vercel.app/) - Learn more about SWR configuration options
 
-## 使用示例
+## Usage Examples
 
-### 1. 无参数函数
+### 1. Function Without Parameters
 
 ```typescript
 const api = {
   getUserList: defineKeyed("users.list", () => request.get("/api/users")),
 };
 
-// 使用时无需传参
+// No arguments needed when calling
 const { data, isLoading } = useKeyedSWR(api.getUserList);
 ```
 
-### 2. 单个参数函数
+### 2. Function With a Single Parameter
 
 ```typescript
 const api = {
@@ -52,11 +52,11 @@ const api = {
   ),
 };
 
-// 传入单个参数
+// Pass a single argument
 const { data, isLoading } = useKeyedSWR(api.getUser, "123");
 ```
 
-### 3. 多参数函数
+### 3. Function With Multiple Parameters
 
 ```typescript
 const api = {
@@ -65,11 +65,11 @@ const api = {
   ),
 };
 
-// 传入多个参数
+// Pass multiple arguments as an array
 const { data, isLoading } = useKeyedSWR(api.searchUsers, ["john", 25]);
 ```
 
-### 4. 带配置选项
+### 4. With Configuration Options
 
 ```typescript
 const { data, isLoading } = useKeyedSWR(api.getUser, "123", {
@@ -80,13 +80,13 @@ const { data, isLoading } = useKeyedSWR(api.getUser, "123", {
 
 ---
 
-## 注意事项
+## Notes
 
-1. **参数处理**：`useKeyedSWR` 会自动根据 `endpoint` 函数的参数个数来判断参数的传入方式
-2. **Key 生成**：最终传递给 `useSWR` 的 key 为 `[endpoint.$key, ...params]`
-3. **类型安全**：完全支持 TypeScript 类型推导，包括返回值类型和参数类型
+1. **Parameter Handling**: `useKeyedSWR` automatically determines how to interpret the parameter(s) based on the number of arguments expected by the `endpoint` function.
+2. **Key Generation**: The final key passed to `useSWR` is `[endpoint.$key, ...params]`.
+3. **Type Safety**: Full TypeScript support with accurate type inference for return values and parameters.
 
-## 函数签名
+## Function Signatures
 
 ```typescript
 function useKeyedSWR<T extends KeyedEndpoint<(...args: any[]) => any>>(
