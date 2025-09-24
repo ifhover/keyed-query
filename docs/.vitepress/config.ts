@@ -2,6 +2,7 @@ export default {
   // 站点级选项
   title: "Keyed-Query",
   description: "Just playing around.",
+  base: "/keyed-query",
   locales: {
     root: {
       label: "English",
