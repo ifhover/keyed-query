@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: 查看文档
-      link: /guide/overview
+      link: ./guide/overview
     - theme: alt
       text: Github
       link: https://github.com/ifhover/keyed-query

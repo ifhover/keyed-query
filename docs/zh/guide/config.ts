@@ -4,25 +4,25 @@ export default {
       {
         text: "指南",
         items: [
-          { text: "概述", link: "/guide/overview" },
-          { text: "快速开始", link: "/guide/quick-start" },
-          { text: "其他说明", link: "/guide/other" },
+          { text: "概述", link: "/zh/guide/overview" },
+          { text: "快速开始", link: "/zh/guide/quick-start" },
+          { text: "其他说明", link: "/zh/guide/other" },
         ],
       },
       {
         text: "Core",
         items: [
-          { text: "KeyedEndpoint", link: "/guide/core/KeyedEndpoint" },
-          { text: "defineKeyed", link: "/guide/core/defineKeyed" },
+          { text: "KeyedEndpoint", link: "/zh/guide/core/KeyedEndpoint" },
+          { text: "defineKeyed", link: "/zh/guide/core/defineKeyed" },
         ],
       },
       {
         text: "SWR",
         items: [
-          { text: "useKeyedSWR", link: "/guide/swr/useKeyedSWR" },
+          { text: "useKeyedSWR", link: "/zh/guide/swr/useKeyedSWR" },
           {
             text: "useKeyedSWRMutation",
-            link: "/guide/swr/useKeyedSWRMutation",
+            link: "/zh/guide/swr/useKeyedSWRMutation",
           },
         ],
       },
@@ -31,11 +31,11 @@ export default {
         items: [
           {
             text: "useKeyedQuery",
-            link: "/guide/tanstack-query/useKeyedQuery",
+            link: "/zh/guide/tanstack-query/useKeyedQuery",
           },
           {
             text: "useKeyedMutation",
-            link: "/guide/tanstack-query/useKeyedMutation",
+            link: "/zh/guide/tanstack-query/useKeyedMutation",
           },
         ],
       },

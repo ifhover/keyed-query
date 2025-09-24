@@ -71,7 +71,7 @@ function Profile({ id }: { id: string }) {
 
 ## What Does `defineKeyed` Do?
 
-The return value of `defineKeyed(key, fn)` is of type [KeyedEndpoint](/KeyedEndpoint). It behaves like a regular function but comes with two additional properties:
+The return value of `defineKeyed(key, fn)` is of type [KeyedEndpoint](./core/KeyedEndpoint). It behaves like a regular function but comes with two additional properties:
 
 - `$key`: The bound key string.
 - `$getKey(...args)`: Accepts the function’s arguments and returns the full key array.

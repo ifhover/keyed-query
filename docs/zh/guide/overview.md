@@ -71,7 +71,7 @@ function Profile({ id }: { id: string }) {
 
 ## `defineKeyed` 做了什么？
 
-`defineKeyed(key, fn)` 的返回值[KeyedEndpoint ](/KeyedEndpoint)类型是一个普通的函数，但它额外附加了两个属性：
+`defineKeyed(key, fn)` 的返回值[KeyedEndpoint ](./core/KeyedEndpoint)类型是一个普通的函数，但它额外附加了两个属性：
 
 - `$key`: 表示绑定的 key 字符串。
 - `$getKey(...args)`: 接收函数参数并返回完整的 key 数组。
