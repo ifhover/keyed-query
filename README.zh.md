@@ -14,14 +14,13 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/keyed-query"><img src="https://img.shields.io/npm/v/keyed-query?style=for-the-badge&color=blue" alt="npm version" /></a>
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-green.svg?style=for-the-badge" alt="License" /></a>
+  <a href="https://www.npmjs.com/package/keyed-query"><img src="https://img.shields.io/npm/v/keyed-query?color=blue" alt="npm version" /></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/github/stars/ifhover/keyed-query" alt="License" /></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License" /></a>
 </p>
 
 <p align="center">
-  📘 完整文档: <a href="https://ifhover.github.io/keyed-query/">https://ifhover.github.io/keyed-query/</a> &nbsp;|&nbsp;
-  💾 npm: <a href="https://www.npmjs.com/package/keyed-query">keyed-query</a> &nbsp;|&nbsp;
-  🐛 GitHub: <a href="https://github.com/ifhover/keyed-query">ifhover/keyed-query</a>
+  📘 完整文档: <a href="https://ifhover.github.io/keyed-query/">https://ifhover.github.io/keyed-query/</a>
 </p>
 
 ---
