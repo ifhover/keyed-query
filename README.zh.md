@@ -7,11 +7,9 @@
 
 ## Overview
 
-🔑 更高效、更低心智负担地管理 SWR / TanStack Query 的 `queryKey` 与类型安全
+一个让你更轻松使用 SWR 或 TanStack Query 的小工具。
 
-<p align="center">
-  <strong>通过「函数即 Key」理念，统一数据请求逻辑与缓存策略</strong>
-</p>
+它做的事情很简单： 👉 **在你定义数据请求函数的时候，顺手给它绑一个 key**，然后就可以直接在组件里用了，不用再额外封装一层 Hook。
 
 <p align="center">
   <a href="https://www.npmjs.com/package/keyed-query"><img src="https://img.shields.io/npm/v/keyed-query?color=blue" alt="npm version" /></a>
@@ -25,13 +23,77 @@
 
 ---
 
-## 📌 简介
+## 📌 动机
 
-**Keyed-Query** 是一个轻量而强大的工具库，专为简化 [SWR](https://swr.vercel.app) 和 [TanStack Query](https://tanstack.com/query) 的使用体验而设计。
+### ❌ 以前要写两个函数
 
-它提出 **“Function as Key”** 的理念 —— 将数据获取函数与其缓存键（`queryKey`）绑定，自动管理 key，避免重复定义、拼写错误，并获得完整的类型安全支持。
+比如你想获取用户信息，通常要这么写：
 
-> ✅ 零配置 | 🧪 类型推导完善 | 🔁 支持多库 | 🌱 易拓展
+```ts
+// api/user.ts
+// 1. 写一个 fetch 函数
+async function fetchUser(id: string) {
+  const res = await fetch(`/api/users/${id}`);
+  return res.json();
+}
+
+// 2. 再写一个 useHook 封装 SWR
+function useUser(id: string) {
+  return useSWR(["user", id], () => fetchUser(id));
+}
+```
+
+```tsx
+// UserProfile.tsx
+import { useUser } from "./api/user";
+
+function UserProfile({ userId }) {
+  const { data, isLoading } = useUser(userId);
+  if (isLoading) return <div>加载中...</div>;
+  return <div>你好，{data.name}</div>;
+}
+```
+
+你看，为了一个接口，你要写两个函数：
+
+- `fetchUser`：发请求
+- `useUser`：配合组件用，还要手动传 `['user', id]`
+
+如果项目有 50 个接口，你就得写 100 个函数？太累了。
+
+## ✅ 现在：只写一个函数就够了
+
+用 `keyed-query`，你只需要定义一次：
+
+```ts
+// api/user.ts
+import { defineKeyed } from "keyed-query";
+
+// 定义时顺便把 key 绑上
+const fetchUser = defineKeyed("user", async (id: string) => {
+  const res = await fetch(`/api/users/${id}`);
+  return res.json();
+});
+```
+
+然后在组件里直接用：
+
+```tsx
+// UserProfile.tsx
+import { useKeyedSWR } from "keyed-query/hooks/swr";
+import { fetchUser } from "./api/user";
+
+function UserProfile({ userId }) {
+  const { data, isLoading } = useKeyedSWR(fetchUser, userId);
+  if (isLoading) return <div>加载中...</div>;
+  return <div>你好，{data.name}</div>;
+}
+```
+
+就这么简单。
+
+不需要 `useUser` 了，也不用手动写 `['user', id]`。  
+你只定义了一个函数，但它自己知道自己的 key 是什么。
 
 ---
 
@@ -102,21 +164,6 @@ useQuery({
 ```
 
 > ⚠️ 这只是一个最简示例。了解更多高级用法，请访问官方文档。
-
----
-
-## 📚 官方文档
-
-📘 **我们已为你准备了完整的独立文档站点：**
-
-👉 [https://ifhover.github.io/keyed-query/](https://ifhover.github.io/keyed-query/)
-
-包含：
-
-- `defineKeyed` 详解与最佳实践
-- SWR / TanStack Query 集成指南
-- 多参数、可选参数、mutation 使用方式
-- API Reference
 
 ---
 

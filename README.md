@@ -3,15 +3,13 @@
 ## Languages
 
 - English
-- [简体中文](README.zh.md)
+- [简体中文](README.zh-CN.md)
 
 ## Overview
 
-🔑 More efficiently and with less cognitive overhead, manage `queryKey` and type safety for SWR / TanStack Query
+A small utility that makes it easier to use SWR or TanStack Query.
 
-<p align="center">
-  <strong>Unify data fetching logic and caching strategies through the "Function as Key" philosophy</strong>
-</p>
+It does one simple thing: 👉 **bind a unique key to your data-fetching function when you define it**, so you can directly use it in components without wrapping another custom Hook.
 
 <p align="center">
   <a href="https://www.npmjs.com/package/keyed-query"><img src="https://img.shields.io/npm/v/keyed-query?color=blue" alt="npm version" /></a>
@@ -25,27 +23,91 @@
 
 ---
 
-## 📌 Introduction
+## 📌 Motivation
 
-**Keyed-Query** is a lightweight yet powerful utility library designed to simplify the usage experience of [SWR](https://swr.vercel.app) and [TanStack Query](https://tanstack.com/query).
+### ❌ Previously: Two Functions Needed
 
-It introduces the **"Function as Key"** concept — binding data fetching functions with their cache keys (`queryKey`) to automatically manage keys, avoid duplicate definitions or typos, and achieve full type safety.
+For example, if you want to fetch user information, you'd typically write:
 
-> ✅ Zero Configuration | 🧪 Excellent Type Inference | 🔁 Multi-library Support | 🌱 Easy to Extend
+```ts
+// api/user.ts
+// 1. Write a fetch function
+async function fetchUser(id: string) {
+  const res = await fetch(`/api/users/${id}`);
+  return res.json();
+}
+
+// 2. Then create a useHook to wrap SWR
+function useUser(id: string) {
+  return useSWR(["user", id], () => fetchUser(id));
+}
+```
+
+```tsx
+// UserProfile.tsx
+import { useUser } from "./api/user";
+
+function UserProfile({ userId }) {
+  const { data, isLoading } = useUser(userId);
+  if (isLoading) return <div>Loading...</div>;
+  return <div>Hello, {data.name}</div>;
+}
+```
+
+As you can see, for one API endpoint, you need to write two functions:
+
+- `fetchUser`: performs the request
+- `useUser`: used in components, requiring manual specification of `['user', id]`
+
+If your project has 50 endpoints, do you really want to write 100 functions? That's exhausting.
+
+## ✅ Now: One Function Is Enough
+
+With `keyed-query`, you only need to define once:
+
+```ts
+// api/user.ts
+import { defineKeyed } from "keyed-query";
+
+// Bind the key during definition
+const fetchUser = defineKeyed("user", async (id: string) => {
+  const res = await fetch(`/api/users/${id}`);
+  return res.json();
+});
+```
+
+Then use it directly in your component:
+
+```tsx
+// UserProfile.tsx
+import { useKeyedSWR } from "keyed-query/hooks/swr";
+import { fetchUser } from "./api/user";
+
+function UserProfile({ userId }) {
+  const { data, isLoading } = useKeyedSWR(fetchUser, userId);
+  if (isLoading) return <div>Loading...</div>;
+  return <div>Hello, {data.name}</div>;
+}
+```
+
+That's it.
+
+No more `useUser` wrapper, and no need to manually write `['user', id]`.  
+You define just one function, and it knows its own key automatically.
 
 ---
 
 ## 🌟 Core Features
 
-| Feature                            | Description                                                                                         |
-| ---------------------------------- | --------------------------------------------------------------------------------------------------- |
-| 🔑 **Auto Key Management**         | Each function has a unique `$key`; parameters are automatically combined into a complete `queryKey` |
-| 🎯 **Type Safety**                 | Automatic inference of parameter and return types, no manual generics required                      |
-| 🔄 **Multi-library Compatibility** | Supports both SWR and TanStack Query with consistent APIs                                           |
-| 🚀 **Ready-to-Use**                | Install and go — no extra configuration needed                                                      |
-| 💡 **Function as Key**             | Data fetching function = logic + cache identifier, unified abstraction                              |
+| Feature                            | Description                                                                                     |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------- |
+| 🔑 **Automatic Key Management**    | Each function has a unique `$key`; parameters are automatically combined into a full `queryKey` |
+| 🎯 **Type Safety**                 | Automatic inference of parameter and return types; no manual generics needed                    |
+| 🔄 **Multi-Library Compatibility** | Supports both SWR and TanStack Query with consistent APIs                                       |
+| 🚀 **Zero Configuration**          | Ready to use after installation, no extra setup required                                        |
+| 💡 **Function as Key**             | Data-fetching function = logic + cache identifier, unified abstraction                          |
 
-> Quoted from official site: **Bind request functions with unique identifiers to perfectly unify logic and caching strategies**
+> From the official site: **Bind request functions with unique identifiers to perfectly unify logic and caching strategies**
 
 ---
 
@@ -79,7 +141,7 @@ const fetchUser = defineKeyed("user", async (id: string) => {
 });
 ```
 
-### 2. Use in Component (using TanStack Query as example)
+### 2. Use in Component (TanStack Query Example)
 
 ```tsx
 import { useKeyedQuery } from "keyed-query/hooks/tanstack-query";
@@ -92,7 +154,7 @@ function UserProfile({ userId }: { userId: string }) {
 }
 ```
 
-Equivalent to native implementation:
+Equivalent to native syntax:
 
 ```ts
 useQuery({
@@ -101,22 +163,7 @@ useQuery({
 });
 ```
 
-> ⚠️ This is just a minimal example. For advanced usage, please visit the official documentation.
-
----
-
-## 📚 Official Documentation
-
-📘 **We've prepared a complete standalone documentation site for you:**
-
-👉 [https://ifhover.github.io/keyed-query/](https://ifhover.github.io/keyed-query/)
-
-Includes:
-
-- Detailed guide and best practices for `defineKeyed`
-- Integration guides for SWR / TanStack Query
-- Usage with multiple parameters, optional parameters, and mutations
-- API Reference
+> ⚠️ This is a minimal example. For advanced usage, please visit the official documentation.
 
 ---
 
@@ -127,7 +174,7 @@ Includes:
 | [SWR](https://swr.vercel.app)                      | `useKeyedSWR`, `useKeyedSWRMutation` |
 | [TanStack Query React](https://tanstack.com/query) | `useKeyedQuery`, `useKeyedMutation`  |
 
-> Want support for other data-fetching libraries or hooks? Feel free to open an Issue or submit a PR!
+> Want support for other data-fetching libraries or hooks? Feel free to open an Issue or PR!
 
 ---
 
@@ -138,7 +185,7 @@ git clone https://github.com/ifhover/keyed-query.git
 cd keyed-query
 
 pnpm install
-pnpm dev     # start development
+pnpm dev     # start development server
 ```
 
 ---
@@ -153,7 +200,7 @@ Feel free to open Issues to discuss problems or submit Pull Requests to contribu
 
 ### v1.0.2 - 2025-09-24
 
-- Update dependencies and remove unused ones
+- Update dependencies, remove unused ones
 - Update usage documentation
 
 ### v1.0.1 - 2025-09-23
