@@ -1,6 +1,6 @@
 {
   "name": "keyed-query",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "description": "For simple query and mutation",
   "license": "MIT",

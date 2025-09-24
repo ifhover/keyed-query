@@ -151,13 +151,16 @@ Feel free to open Issues to discuss problems or submit Pull Requests to contribu
 
 ## 📜 Changelog
 
-### v1.0.1 - 2025-04-05
+### v1.0.2 - 2025-09-24
+
+- Update dependencies and remove unused ones
+- Update usage documentation
+
+### v1.0.1 - 2025-09-23
 
 - Initial release
 - Support for SWR and TanStack Query
 - Complete TypeScript type system provided
-
-> See [CHANGELOG.md](./CHANGELOG.md) for full update history
 
 ---
 
